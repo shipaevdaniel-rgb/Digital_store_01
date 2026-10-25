@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>NEXUS — магазин цифровых товаров</title>
+<style>
+  /* ============ БАЗА ============ */
+  *, *::before, *::after { box-sizing: border-box; }
+  * { margin: 0; padding: 0; }
+
+  :root {
+    --bg-0: #070a16;
+    --bg-1: #0d1226;
+    --surface: rgba(255, 255, 255, .045);
+    --surface-2: rgba(255, 255, 255, .085);
+    --border: rgba(255, 255, 255, .09);
+    --text: #eef2ff;
+    --muted: #98a2c0;
+    --accent: #7c5cff;
+    --accent-2: #22d3ee;
+    --success: #34d399;
+    --danger: #f87171;
+    --radius: 20px;
+    --gap: clamp(16px, 2.2vw, 30px);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    background:
+      radial-gradient(1200px 600px at 10% -10%, rgba(124, 92, 255, .25), transparent 60%),
+      radial-gradient(1000px 500px at 100% 0%, rgba(34, 211, 238, .16), transparent 60%),
+      radial-gradient(900px 600px at 50% 120%, rgba(124, 92, 255, .14), transparent 60%),
+      linear-gradient(180deg, #070a16, #0a0f22 40%, #070a16);
+    background-attachment: fixed;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 0 clamp(16px, 3vw, 40px);
+  }
+
+  @media (min-width: 1800px) { .container { max-width: 1720px; } }
+
+  /* ============ HEADER ============ */
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    background: rgba(7, 10, 22, .68);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-top: 14px;
+    padding-bottom: 14px;
+  }
+
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text);
+    text-decoration: none;
+    font-weight: 800;
+    letter-spacing: -.02em;
+    font-size: 1.05rem;
+  }
+
+  .logo-mark {
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--accent), #5b8cff 60%, var(--accent-2));
+    font-weight: 900;
+    color: #fff;
+    box-shadow: 0 8px 22px -8px rgba(124, 92, 255, .9);
+  }
+
+  .logo .dot { color: var(--accent-2); }
+
+  .header-actions { display: flex; align-items: center; gap: 10px; }
+
+  /* ============ КНОПКИ ============ */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: none;
+    cursor: pointer;
+    font: inherit;
+    font-weight: 600;
+    border-radius: 13px;
+    padding: 12px 18px;
+    color: #fff;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: transform .18s ease, filter .18s ease, background .18s ease, box-shadow .18s ease;
+    user-select: none;
+  }
+
+  .btn:active { transform: scale(.98); }
+
+  .btn.primary {
+    background: linear-gradient(135deg, var(--accent), #5b8cff);
+    box-shadow: 0 12px 26px -12px rgba(124, 92, 255, .95);
+  }
+
+  .btn.primary:hover { filter: brightness(1.1); transform: translateY(-1px); }
+
+  .btn.ghost {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+  }
+
+  .btn.ghost:hover { background: rgba(255, 255, 255, .13); }
+
+  .btn.small { padding: 9px 14px; font-size: .875rem; border-radius: 11px; }
+
+  .btn.danger { background: rgba(248, 113, 113, .14); border: 1px solid rgba(248, 113, 113, .4); color: #fca5a5; }
+  .btn.danger:hover { background: rgba(248, 113, 113, .24); }
+
+  .btn.full { width: 100%; }
+
+  /* ============ HERO ============ */
+  .hero { padding: clamp(36px, 6vw, 76px) 0 clamp(24px, 3vw, 40px); }
+
+  .hero h1 {
+    font-size: clamp(1.9rem, 4.6vw, 3.6rem);
+    line-height: 1.08;
+    letter-spacing: -.035em;
+    font-weight: 800;
+    max-width: 18ch;
+  }
+
+  .hero .grad {
+    background: linear-gradient(100deg, var(--accent) 10%, var(--accent-2) 90%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .hero p {
+    color: var(--muted);
+    font-size: clamp(.95rem, 1.4vw, 1.15rem);
+    max-width: 58ch;
+    margin-top: 16px;
+  }
+
+  .badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 24px;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: .82rem;
+    font-weight: 600;
+    color: #c7d2fe;
+    background: rgba(124, 92, 255, .12);
+    border: 1px solid rgba(124, 92, 255, .28);
+    padding: 7px 14px;
+    border-radius: 999px;
+  }
+
+  .badge::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent-2);
+    box-shadow: 0 0 10px var(--accent-2);
+  }
+
+  /* ============ СЕТКА КАТАЛОГА ============ */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+    gap: var(--gap);
+    padding-bottom: clamp(40px, 6vw, 80px);
+  }
+
+  .card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: transform .28s ease, border-color .28s ease, box-shadow .28s ease;
+    animation: cardIn .45s ease both;
+  }
+
+  @keyframes cardIn {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: none; }
+  }
+
+  @media (hover: hover) {
+    .card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(124, 92, 255, .5);
+      box-shadow: 0 26px 50px -26px rgba(124, 92, 255, .75);
+    }
+  }
+
+  .card-img {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    display: block;
+    background: linear-gradient(135deg, #1b2340, #0f1730);
+  }
+
+  .card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: clamp(16px, 1.6vw, 22px);
+    flex: 1;
+  }
+
+  .card-title {
+    font-size: clamp(1rem, 1.2vw, 1.14rem);
+    font-weight: 700;
+    letter-spacing: -.015em;
+  }
+
+  .card-desc {
+    color: var(--muted);
+    font-size: .9rem;
+    line-height: 1.55;
+    flex: 1;
+  }
+
+  .card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 6px;
+  }
+
+  .price {
+    font-size: clamp(1.15rem, 1.5vw, 1.4rem);
+    font-weight: 800;
+    letter-spacing: -.02em;
+    background: linear-gradient(100deg, #fff, #b9c4ff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    white-space: nowrap;
+  }
+
+  .del-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 2;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 1px solid rgba(248, 113, 113, .5);
+    background: rgba(12, 16, 32, .82);
+    color: #fca5a5;
+    font-size: 15px;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    backdrop-filter: blur(6px);
+    transition: .18s;
+  }
+
+  .del-btn:hover { background: rgba(248, 113, 113, .9); color: #fff; }
+
+  .empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 70px 20px;
+    color: var(--muted);
+    border: 1px dashed var(--border);
+    border-radius: var(--radius);
+  }
+
+  /* ============ МОДАЛКИ ============ */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 18px;
+    background: rgba(4, 7, 18, .72);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .25s ease, visibility .25s ease;
+  }
+
+  .modal-overlay.open { opacity: 1; visibility: visible; }
+
+  .modal {
+    position: relative;
+    width: min(460px, 100%);
+    max-height: 92vh;
+    overflow-y: auto;
+    padding: clamp(22px, 3vw, 30px);
+    border-radius: 22px;
+    border: 1px solid var(--border);
+    background: linear-gradient(180deg, #141b36, #0c1124);
+    box-shadow: 0 40px 90px -30px rgba(0, 0, 0, .9);
+    transform: translateY(14px) scale(.98);
+    transition: transform .28s cubic-bezier(.2, .9, .3, 1.2);
+  }
+
+  .modal-overlay.open .modal { transform: none; }
+
+  .modal.wide { width: min(560px, 100%); }
+
+  .modal-close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--surface-2);
+    color: var(--muted);
+    font-size: 15px;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    transition: .18s;
+  }
+
+  .modal-close:hover { background: rgba(255, 255, 255, .16); color: #fff; }
+
+  .modal h2 {
+    font-size: 1.25rem;
+    font-weight: 800;
+    letter-spacing: -.02em;
+    padding-right: 40px;
+    margin-bottom: 6px;
+  }
+
+  .modal .sum {
+    color: var(--muted);
+    font-size: .92rem;
+    margin-bottom: 20px;
+  }
+
+  .modal .sum b { color: var(--text); font-size: 1.1rem; }
+
+  .qr-wrap {
+    display: flex;
+    justify-content: center;
+    margin: 4px 0 18px;
+  }
+
+  .qr {
+    background: #fff;
+    padding: 12px;
+    border-radius: 18px;
+    box-shadow: 0 16px 40px -18px rgba(124, 92, 255, .8);
+    line-height: 0;
+  }
+
+  .qr img { display: block; width: min(230px, 55vw); height: auto; }
+
+  .hint {
+    color: var(--muted);
+    font-size: .87rem;
+    text-align: center;
+    margin-bottom: 18px;
+    line-height: 1.5;
+  }
+
+  .modal-actions { display: flex; flex-direction: column; gap: 10px; }
+
+  /* ============ ФОРМА ============ */
+  .field { display: flex; flex-direction: column; gap: 7px; margin-bottom: 15px; }
+
+  .field label { font-size: .82rem; font-weight: 600; color: var(--muted); letter-spacing: .01em; }
+
+  .field input, .field textarea {
+    width: 100%;
+    font: inherit;
+    font-size: .94rem;
+    color: var(--text);
+    background: rgba(255, 255, 255, .05);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 14px;
+    outline: none;
+    transition: .18s;
+  }
+
+  .field input:focus, .field textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(124, 92, 255, .2);
+  }
+
+  .field textarea { resize: vertical; min-height: 84px; }
+
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 460px) { .field-row { grid-template-columns: 1fr; } }
+
+  .file-note { font-size: .78rem; color: var(--muted); }
+
+  /* ============ TOAST ============ */
+  .toast {
+    position: fixed;
+    left: 50%;
+    bottom: 28px;
+    transform: translateX(-50%) translateY(24px);
+    z-index: 200;
+    padding: 13px 22px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #1b2340, #131a33);
+    border: 1px solid rgba(124, 92, 255, .45);
+    color: var(--text);
+    font-size: .9rem;
+    font-weight: 600;
+    box-shadow: 0 22px 50px -18px rgba(0, 0, 0, .9);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .25s, transform .25s;
+    max-width: calc(100vw - 32px);
+    text-align: center;
+  }
+
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* ============ FOOTER ============ */
+  .footer {
+    border-top: 1px solid var(--border);
+    padding: 26px 0 34px;
+    color: var(--muted);
+    font-size: .85rem;
+    text-align: center;
+  }
+
+  .footer a { color: #a5b4fc; text-decoration: none; }
+
+  /* ============ АДАПТИВ ============ */
+  @media (max-width: 640px) {
+    .header-inner { flex-wrap: wrap; }
+    .logo span:last-child { font-size: .98rem; }
+    .btn.small { padding: 8px 12px; font-size: .8rem; }
+    .hero h1 { max-width: 100%; }
+    .card-footer { flex-wrap: wrap; }
+    .card-footer .btn { flex: 1; }
+  }
+
+  @media (min-width: 2200px) {
+    .grid { grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); }
+  }
+</style>
+</head>
+<body>
+
+<!-- ================= HEADER ================= -->
+<header class="header">
+  <div class="container header-inner">
+    <a class="logo" href="#">
+      <span class="logo-mark">N</span>
+      <span>NEXUS<span class="dot">.</span>store</span>
+    </a>
+    <div class="header-actions">
+      <button class="btn ghost small" id="adminToggle">🔐 Админ-панель</button>
+      <button class="btn primary small" id="addBtn" style="display:none">+ Добавить товар</button>
+    </div>
+  </div>
+</header>
+
+<!-- ================= MAIN ================= -->
+<main class="container">
+  <section class="hero">
+    <h1>Цифровые товары <span class="grad">премиум-класса</span></h1>
+    <p>Подписки на GPT, курсы по нейросетям и готовые пакеты промптов для продаж. Оплата по СБП, чек формируется автоматически.</p>
+    <div class="badges">
+      <span class="badge">Мгновенная выдача</span>
+      <span class="badge">Оплата по СБП</span>
+      <span class="badge">Без регистрации</span>
+    </div>
+  </section>
+
+  <section class="grid" id="grid" aria-live="polite"></section>
+</main>
+
+<!-- ================= FOOTER ================= -->
+<footer class="footer">
+  <div class="container">
+    © <span id="year"></span> NEXUS.store — магазин цифровых товаров. Оплата по СБП.
+  </div>
+</footer>
+
+<!-- ================= МОДАЛКА ОПЛАТЫ ================= -->
+<div class="modal-overlay" id="payModal" role="dialog" aria-modal="true">
+  <div class="modal">
+    <button class="modal-close" data-close="payModal" aria-label="Закрыть">✕</button>
+    <h2 id="payTitle">Товар</h2>
+    <div class="sum">К оплате: <b id="payPrice">0 ₽</b></div>
+
+    <div class="qr-wrap" id="qrWrap">
+      <div class="qr"><img id="qrImg" alt="QR-код для оплаты по СБП" /></div>
+    </div>
+
+    <p class="hint" id="payHint">Отсканируйте QR-код в приложении банка или нажмите кнопку ниже.</p>
+
+    <div class="modal-actions">
+      <a class="btn primary full" id="payLinkBtn" target="_blank" rel="noopener noreferrer">Перейти к оплате по СБП</a>
+      <button class="btn ghost full" id="paidBtn">Я оплатил — получить чек</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================= МОДАЛКА ДОБАВЛЕНИЯ ТОВАРА ================= -->
+<div class="modal-overlay" id="adminModal" role="dialog" aria-modal="true">
+  <div class="modal wide">
+    <button class="modal-close" data-close="adminModal" aria-label="Закрыть">✕</button>
+    <h2>Новый товар</h2>
+    <form id="productForm" autocomplete="off">
+      <div class="field">
+        <label for="f-title">Название</label>
+        <input id="f-title" name="title" required maxlength="80" placeholder="Например: Подписка ChatGPT Plus" />
+      </div>
+
+      <div class="field">
+        <label for="f-desc">Описание</label>
+        <textarea id="f-desc" name="description" required maxlength="300" placeholder="Что входит в товар, срок действия, условия выдачи…"></textarea>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="f-price">Цена, ₽</label>
+          <input id="f-price" name="price" type="number" min="0" step="1" required placeholder="1990" />
+        </div>
+        <div class="field">
+          <label for="f-file">Картинка (файл)</label>
+          <input id="f-file" type="file" accept="image/*" />
+          <span class="file-note">до 400 КБ</span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="f-image">…или ссылка на изображение</label>
+        <input id="f-image" name="image" type="url" placeholder="https://images.unsplash.com/…" />
+      </div>
+
+      <div class="field">
+        <label for="f-pay">Ссылка на оплату по СБП</label>
+        <input id="f-pay" name="payLink" type="url" placeholder="https://qr.nspk.ru/…" />
+        <span class="file-note">Из неё автоматически построится QR-код для покупателя</span>
+      </div>
+
+      <button class="btn primary full" type="submit" style="margin-top:8px">Добавить товар</button>
+      <button class="btn ghost full" type="button" id="resetDemo" style="margin-top:10px">Сбросить к демо-товарам</button>
+    </form>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* =========================================================
+   ДАННЫЕ
+   ========================================================= */
+const STORAGE_KEY = 'nexus_products_v1';
+const ADMIN_PASSWORD = 'admin123'; // ← СМЕНИТЕ НА СВОЙ ПАРОЛЬ
+
+const FALLBACK_IMG = 'data:image/svg+xml;utf8,' + encodeURIComponent(
+  '<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500">' +
+  '<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">' +
+  '<stop offset="0" stop-color="#2a1e5c"/><stop offset="1" stop-color="#0e2a4a"/>' +
+  '</linearGradient></defs><rect width="800" height="500" fill="url(#g)"/>' +
+  '<text x="50%" y="50%" fill="#7c5cff" font-family="sans-serif" font-size="46" ' +
+  'font-weight="700" text-anchor="middle" dominant-baseline="middle">NEXUS</text></svg>'
+);
+
+const DEMO_PRODUCTS = [
+  {
+    id: 'gpt-plus',
+    title: 'Подписка ChatGPT Plus',
+    description: '1 месяц доступа к GPT-4o, o1 и всем новым моделям. Приоритетная скорость, доступ к GPTs. Активация в течение 15 минут после оплаты.',
+    price: 1990,
+    image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=900&q=80',
+    payLink: 'https://qr.nspk.ru/AS1000DEMO0000000000000000000000'
+  },
+  {
+    id: 'ai-course',
+    title: 'Курс «Нейросети с нуля»',
+    description: '12 уроков: от промпт-инжиниринга до автоматизации бизнес-процессов. Доступ навсегда, чат поддержки и домашние задания с проверкой.',
+    price: 4900,
+    image: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=900&q=80',
+    payLink: 'https://qr.nspk.ru/AS1000DEMO0000000000000000000001'
+  },
+  {
+    id: 'prompts-pack',
+    title: 'Пакет промптов для продаж',
+    description: '180 готовых промптов для холодных писем, скриптов звонков, обработки возражений и прогрева клиентов. Формат Notion + PDF.',
+    price: 1490,
+    image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=900&q=80',
+    payLink: 'https://qr.nspk.ru/AS1000DEMO0000000000000000000002'
+  }
+];
+
+/* =========================================================
+   СОСТОЯНИЕ
+   ========================================================= */
+let products = loadProducts();
+let isAdmin = false;
+let currentProduct = null;
+let uploadedImage = '';
+
+/* =========================================================
+   УТИЛИТЫ
+   ========================================================= */
+const $ = (id) => document.getElementById(id);
+
+function loadProducts() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return structuredClone(DEMO_PRODUCTS);
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : structuredClone(DEMO_PRODUCTS);
+  } catch (e) {
+    return structuredClone(DEMO_PRODUCTS);
+  }
+}
+
+function saveProducts() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(products));
+  } catch (e) {
+    toast('Не удалось сохранить: переполнено хранилище');
+  }
+}
+
+function esc(str) {
+  return String(str).replace(/[&<>"']/g, (c) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[c]));
+}
+
+function formatPrice(value) {
+  return new Intl.NumberFormat('ru-RU').format(Number(value) || 0) + ' ₽';
+}
+
+function imgFallback(img) {
+  img.onerror = null;
+  img.src = FALLBACK_IMG;
+}
+
+function toast(message) {
+  const el = $('toast');
+  el.textContent = message;
+  el.classList.add('show');
+  clearTimeout(el._timer);
+  el._timer = setTimeout(() => el.classList.remove('show'), 2800);
+}
+
+function openModal(id) {
+  $(id).classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(id) {
+  $(id).classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+/* =========================================================
+   РЕНДЕР КАТАЛОГА
+   ========================================================= */
+function render() {
+  const grid = $('grid');
+
+  if (!products.length) {
+    grid.innerHTML = '<div class="empty">Товаров пока нет. Войдите в админ-панель и добавьте первый товар.</div>';
+    return;
+  }
+
+  grid.innerHTML = products.map((p) => `
+    <article class="card">
+      ${isAdmin ? `<button class="del-btn" title="Удалить товар" data-del="${esc(p.id)}">✕</button>` : ''}
+      <img class="card-img" src="${esc(p.image || FALLBACK_IMG)}" alt="${esc(p.title)}"
+           loading="lazy" onerror="imgFallback(this)" />
+      <div class="card-body">
+        <h3 class="card-title">${esc(p.title)}</h3>
+        <p class="card-desc">${esc(p.description)}</p>
+        <div class="card-footer">
+          <span class="price">${formatPrice(p.price)}</span>
+          <button class="btn primary" data-buy="${esc(p.id)}">Оплатить</button>
+        </div>
+      </div>
+    </article>
+  `).join('');
+}
+
+/* =========================================================
+   ОПЛАТА
+   ========================================================= */
+function openPay(id) {
+  const product = products.find((p) => p.id === id);
+  if (!product) return;
+
+  currentProduct = product;
+  $('payTitle').textContent = product.title;
+  $('payPrice').textContent = formatPrice(product.price);
+
+  const link = (product.payLink || '').trim();
+  const qrImg = $('qrImg');
+  const qrWrap = $('qrWrap');
+  const linkBtn = $('payLinkBtn');
+  const hint = $('payHint');
+
+  if (link) {
+    qrImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=460x460&margin=0&data=' +
+      encodeURIComponent(link);
+    qrWrap.style.display = 'flex';
+    linkBtn.href = link;
+    linkBtn.style.display = 'inline-flex';
+    hint.textContent = 'Отсканируйте QR-код в приложении банка или нажмите кнопку ниже.';
+  } else {
+    qrImg.removeAttribute('src');
+    qrWrap.style.display = 'none';
+    linkBtn.style.display = 'none';
+    hint.textContent = 'Для этого товара не указана ссылка на оплату. Добавьте её в админ-панели.';
+  }
+
+  openModal('payModal');
+}
+
+/* =========================================================
+   ЧЕК
+   ========================================================= */
+function makeReceipt() {
+  if (!currentProduct) return;
+
+  const p = currentProduct;
+  const orderId = 'NX-' + Date.now().toString().slice(-8);
+  const dt = new Date().toLocaleString('ru-RU', {
+    day: '2-digit', month: '2-digit', year: 'numeric',
+    hour: '2-digit', minute: '2-digit'
+  });
+
+  const html = `<!DOCTYPE html>
+<html lang="ru"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Чек ${orderId}</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,'Segoe UI',Roboto,sans-serif;background:#f4f6fb;padding:40px 16px;color:#0f172a}
+  .receipt{max-width:440px;margin:0 auto;background:#fff;border-radius:18px;padding:30px;box-shadow:0 24px 60px -24px rgba(15,23,42,.3)}
+  .brand{font-weight:800;letter-spacing:.4px;font-size:17px}
+  .muted{color:#64748b;font-size:13px;margin-top:4px}
+  h1{font-size:19px;margin:22px 0 8px}
+  .status{display:inline-block;background:#dcfce7;color:#166534;font-size:12px;font-weight:700;padding:5px 12px;border-radius:999px}
+  table{width:100%;border-collapse:collapse;margin-top:20px;font-size:14px}
+  td{padding:10px 0;border-bottom:1px dashed #e2e8f0;vertical-align:top}
+  td:last-child{text-align:right;font-weight:600}
+  tr:last-child td{border-bottom:none}
+  .total{font-size:17px;font-weight:800}
+  .btn{display:block;width:100%;margin-top:26px;padding:14px;border:none;border-radius:12px;
+       background:linear-gradient(135deg,#7c5cff,#5b8cff);color:#fff;font-size:15px;font-weight:700;cursor:pointer}
+  .note{color:#64748b;font-size:12.5px;margin-top:20px;line-height:1.5}
+  @media print{body{background:#fff;padding:0}.receipt{box-shadow:none;border-radius:0}.btn{display:none}}
+</style></head>
+<body>
+  <div class="receipt">
+    <div class="brand">NEXUS.STORE</div>
+    <div class="muted">Цифровые товары · Оплата по СБП</div>
+    <h1>Чек об оплате</h1>
+    <span class="status">Оплачено</span>
+    <table>
+      <tr><td>Номер заказа</td><td>${orderId}</td></tr>
+      <tr><td>Дата и время</td><td>${dt}</td></tr>
+      <tr><td>Товар</td><td>${esc(p.title)}</td></tr>
+      <tr><td>Способ оплаты</td><td>СБП</td></tr>
+      <tr><td class="total">Итого</td><td class="total">${formatPrice(p.price)}</td></tr>
+    </table>
+    <p class="note">Спасибо за покупку! Товар будет выдан на указанные контакты в течение 15 минут.
+    Сохраните этот чек — он подтверждает оплату.</p>
+    <button class="btn" onclick="window.print()">Распечатать / сохранить PDF</button>
+  </div>
+</body></html>`;
+
+  const win = window.open('', '_blank', 'width=520,height=780');
+  if (!win) {
+    toast('Разрешите всплывающие окна, чтобы получить чек');
+    return;
+  }
+  win.document.write(html);
+  win.document.close();
+}
+
+/* =========================================================
+   АДМИН-РЕЖИМ
+   ========================================================= */
+function toggleAdmin() {
+  if (isAdmin) {
+    isAdmin = false;
+    $('addBtn').style.display = 'none';
+    $('adminToggle').textContent = '🔐 Админ-панель';
+    render();
+    toast('Режим администратора выключен');
+    return;
+  }
+
+  const pass = prompt('Введите пароль администратора:');
+  if (pass === null) return;
+
+  if (pass === ADMIN_PASSWORD) {
+    isAdmin = true;
+    $('addBtn').style.display = 'inline-flex';
+    $('adminToggle').textContent = '✓ Выйти из админки';
+    render();
+    toast('Режим администратора включён');
+  } else {
+    toast('Неверный пароль');
+  }
+}
+
+function deleteProduct(id) {
+  const product = products.find((p) => p.id === id);
+  if (!product) return;
+  if (!confirm('Удалить товар «' + product.title + '»?')) return;
+
+  products = products.filter((p) => p.id !== id);
+  saveProducts();
+  render();
+  toast('Товар удалён');
+}
+
+/* =========================================================
+   ДОБАВЛЕНИЕ ТОВАРА
+   ========================================================= */
+function handleAddProduct(event) {
+  event.preventDefault();
+  const form = event.target;
+  const data = new FormData(form);
+
+  const imageUrl = String(data.get('image') || '').trim();
+  const product = {
+    id: 'p_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+    title: String(data.get('title') || '').trim(),
+    description: String(data.get('description') || '').trim(),
+    price: Number(data.get('price')) || 0,
+    image: uploadedImage || imageUrl || FALLBACK_IMG,
+    payLink: String(data.get('payLink') || '').trim()
+  };
+
+  if (!product.title || !product.description) {
+    toast('Заполните название и описание');
+    return;
+  }
+
+  products.unshift(product);
+  saveProducts();
+  render();
+
+  form.reset();
+  uploadedImage = '';
+  closeModal('adminModal');
+  toast('Товар добавлен в каталог');
+}
+
+/* =========================================================
+   СОБЫТИЯ
+   ========================================================= */
+document.addEventListener('click', (event) => {
+  // Удаление товара
+  const delBtn = event.target.closest('[data-del]');
+  if (delBtn) {
+    deleteProduct(delBtn.getAttribute('data-del'));
+    return;
+  }
+
+  // Оплата товара
+  const buyBtn = event.target.closest('[data-buy]');
+  if (buyBtn) {
+    openPay(buyBtn.getAttribute('data-buy'));
+    return;
+  }
+
+  // Закрытие модалок по крестику
+  const closeBtn = event.target.closest('[data-close]');
+  if (closeBtn) {
+    closeModal(closeBtn.getAttribute('data-close'));
+    return;
+  }
+
+  // Клик по оверлею
+  if (event.target.classList.contains('modal-overlay')) {
+    event.target.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+});
+
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape') {
+    document.querySelectorAll('.modal-overlay.open').forEach((el) => el.classList.remove('open'));
+    document.body.style.overflow = '';
+  }
+});
+
+$('adminToggle').addEventListener('click', toggleAdmin);
+
+$('addBtn').addEventListener('click', () => {
+  openModal('adminModal');
+});
+
+$('productForm').addEventListener('submit', handleAddProduct);
+
+$('resetDemo').addEventListener('click', () => {
+  if (!confirm('Вернуть демо-товары? Все добавленные товары будут удалены.')) return;
+  products = structuredClone(DEMO_PRODUCTS);
+  saveProducts();
+  render();
+  closeModal('adminModal');
+  toast('Демо-товары восстановлены');
+});
+
+// Загрузка изображения в base64
+$('f-file').addEventListener('change', (event) => {
+  const file = event.target.files && event.target.files[0];
+  if (!file) return;
+
+  if (file.size > 400 * 1024) {
+    toast('Файл слишком большой (максимум 400 КБ)');
+    event.target.value = '';
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = () => {
+    uploadedImage = reader.result;
+    toast('Изображение загружено');
+  };
+  reader.readAsDataURL(file);
+});
+
+// Кнопка «Я оплатил» → чек
+$('paidBtn').addEventListener('click', () => {
+  makeReceipt();
+});
+
+/* =========================================================
+   СТАРТ
+   ========================================================= */
+$('year').textContent = new Date().getFullYear();
+render();
+</script>
+</body>
+</html>
