@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#090b13">
+  <title>{% block title %}NEX Digital Market{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="{{ url_for('index') }}"><span class="brand-mark">N</span><span>NEX<span class="brand-accent">DIGITAL</span></span></a>
+  <nav><a href="{{ url_for('index') }}#catalog">Каталог</a><a href="{{ url_for('index') }}#about">Как это работает</a><a class="nav-cta" href="{{ url_for('index') }}#catalog">Выбрать продукт <span>↗</span></a></nav>
+</header>
+<main>
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}<div class="flash-wrap">{% for category, message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}</div>{% endif %}
+  {% endwith %}
+  {% block content %}{% endblock %}
+</main>
+<footer class="footer"><a class="brand" href="{{ url_for('index') }}"><span class="brand-mark">N</span><span>NEX<span class="brand-accent">DIGITAL</span></span></a><span>Цифровые продукты для новых возможностей</span><span>© {{ 2026 }} NEX Digital Market</span></footer>
+</body>
+</html>
