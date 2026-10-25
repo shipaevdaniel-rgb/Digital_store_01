@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}NEX Digital Market — продукты для AI-эры{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="hero-copy">
+    <div class="eyebrow"><span class="pulse"></span> DIGITAL PRODUCTS · AI WORKFLOW</div>
+    <h1>Твои идеи.<br><span>Усиленные AI.</span></h1>
+    <p class="hero-text">Инструменты, знания и готовые решения, которые помогают создавать быстрее, продавать увереннее и работать умнее.</p>
+    <a class="button button-primary" href="#catalog">Исследовать каталог <span>↓</span></a>
+    <div class="hero-proof"><span class="proof-icon">✦</span><span>Цифровая доставка</span><i></i><span>Оплата онлайн</span><i></i><span>Без регистрации</span></div>
+  </div>
+  <div class="hero-art" aria-label="Абстрактная AI-графика">
+    <div class="orb orb-one"></div><div class="orb orb-two"></div><div class="orb-core">N<span>✦</span></div>
+    <div class="float-card float-top"><span class="mini-icon">✧</span><span><b>AI READY</b><small>Идеи в действие</small></span></div>
+    <div class="float-card float-bottom"><span class="stat-dot"></span><span><b>Сделано для роста</b><small>Знания · Инструменты · Результат</small></span></div>
+    <div class="orbit orbit-a"></div><div class="orbit orbit-b"></div>
+  </div>
+  <div class="hero-grid"></div>
+</section>
+<section id="catalog" class="catalog section-wrap">
+  <div class="section-heading"><div><div class="eyebrow">THE COLLECTION</div><h2>Выбери свой <span>инструмент</span></h2><p>Полезные цифровые продукты — в одном месте.</p></div><div class="catalog-count"><b>{{ products|length }}</b><span>продуктов</span></div></div>
+  {% if products %}
+  <div class="product-grid">
+    {% for product in products %}
+    <article class="product-card">
+      <a class="product-image" href="{{ url_for('product_detail', product_id=product.id) }}">
+        {% if product.image %}<img src="{{ url_for('static', filename=product.image) }}" alt="{{ product.title }}">{% else %}
+        <div class="image-placeholder placeholder-{{ loop.index0 % 4 }}"><span class="placeholder-symbol">{% if loop.index0 % 3 == 0 %}✧{% elif loop.index0 % 3 == 1 %}◈{% else %}⌘{% endif %}</span><span class="placeholder-label">NEX / DIGITAL</span></div>{% endif %}
+        <span class="image-tag">{{ product.category }}</span>
+      </a>
+      <div class="product-info"><h3>{{ product.title }}</h3><p>{{ product.description }}</p>
+        <div class="product-bottom"><strong>{{ product.price_rub|money }}</strong><a class="button button-small" href="{{ url_for('checkout', product_id=product.id) }}">Оплатить <span>↗</span></a></div>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+  {% else %}<div class="empty-state"><span>✧</span><h3>Каталог скоро наполнится</h3><p>Добавь первый товар через панель управления.</p></div>{% endif %}
+</section>
+<section id="about" class="how section-wrap"><div class="eyebrow">SIMPLE BY DESIGN</div><h2>От выбора до доступа — <span>просто.</span></h2><div class="steps"><div class="step"><span>01</span><h3>Выбери продукт</h3><p>Изучи описание и выбери то, что подходит твоей задаче.</p></div><div class="step"><span>02</span><h3>Оплати удобно</h3><p>Перейди на защищённую страницу оплаты провайдера.</p></div><div class="step"><span>03</span><h3>Получи доступ</h3><p>Инструкция или цифровой материал предоставляется после подтверждения платежа.</p></div></div></section>
+{% endblock %}
