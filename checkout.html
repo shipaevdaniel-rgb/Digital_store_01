@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Оплата — {{ product.title }}{% endblock %}
+{% block content %}
+<section class="checkout-wrap">
+  <a class="back-link" href="{{ url_for('product_detail', product_id=product.id) }}">← Вернуться к товару</a>
+  <div class="checkout-card"><div class="eyebrow">SECURE CHECKOUT</div><h1>Завершаем покупку</h1><p class="muted">Регистрация не нужна. Укажи email для получения цифрового товара и/или электронного чека.</p>
+    <div class="checkout-product"><div class="checkout-thumb">{% if product.image %}<img src="{{ url_for('static', filename=product.image) }}" alt="">{% else %}✧{% endif %}</div><div class="checkout-name"><b>{{ product.title }}</b><span>{{ product.category }}</span></div><strong>{{ product.price_rub|money }}</strong></div>
+    <form method="post"><label for="email">Email</label><input id="email" type="email" name="email" placeholder="you@example.com" required maxlength="254" autocomplete="email"><button class="button button-primary button-full" type="submit">Перейти к оплате СБП <span>↗</span></button></form>
+    <p class="fine-print">Нажимая кнопку, ты переходишь к платёжному провайдеру. Заказ считается оплаченным только после подтверждения платежа.</p>
+  </div>
+</section>
+{% endblock %}
