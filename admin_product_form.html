@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Изменить товар' if product.id else 'Добавить товар' }}{% endblock %}
+{% block content %}<section class="admin-form-wrap"><form class="admin-form-card" method="post" enctype="multipart/form-data"><a class="back-link" href="{{ url_for('admin_products') }}">← Назад в панель</a><div class="eyebrow">PRODUCT EDITOR</div><h1>{{ 'Изменить товар' if product.id else 'Новый товар' }}</h1>
+<label>Название<input name="title" maxlength="160" value="{{ product.title or '' }}" required></label>
+<label>Категория<input name="category" maxlength="80" value="{{ product.category or 'Цифровые товары' }}"></label>
+<label>Описание<textarea name="description" rows="4" required>{{ product.description or '' }}</textarea></label>
+<label>Цена в рублях<input name="price_rub" type="number" min="1" step="0.01" value="{{ product.price_rub or '' }}" required></label>
+<label>Изображение товара<input name="image" type="file" accept=".png,.jpg,.jpeg,.webp,.gif"><small>PNG, JPG, WEBP или GIF, до 5 МБ.</small></label>
+<label>Текст / ссылка для выдачи после оплаты<textarea name="delivery_text" rows="3">{{ product.delivery_text or '' }}</textarea><small>В этой версии отображается в подтверждении заказа. Для защищённой доставки файлов подключи приватное хранилище.</small></label>
+<label class="check-label"><input type="checkbox" name="active" {% if product.active or not product.id %}checked{% endif %}> Показывать товар в каталоге</label>
+<button class="button button-primary button-full">Сохранить товар</button></form></section>{% endblock %}
