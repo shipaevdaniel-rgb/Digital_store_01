@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}{{ product.title }} — NEX Digital Market{% endblock %}
+{% block content %}
+<section class="detail section-wrap">
+  <a class="back-link" href="{{ url_for('index') }}#catalog">← Назад в каталог</a>
+  <div class="detail-grid">
+    <div class="detail-image">{% if product.image %}<img src="{{ url_for('static', filename=product.image) }}" alt="{{ product.title }}">{% else %}<div class="image-placeholder placeholder-1"><span class="placeholder-symbol">✧</span><span class="placeholder-label">NEX / DIGITAL</span></div>{% endif %}</div>
+    <div class="detail-copy"><span class="image-tag static-tag">{{ product.category }}</span><h1>{{ product.title }}</h1><p>{{ product.description }}</p><div class="detail-price">{{ product.price_rub|money }}</div><a class="button button-primary" href="{{ url_for('checkout', product_id=product.id) }}">Перейти к оплате <span>↗</span></a><div class="secure-note">◇ Без регистрации · Защищённая оплата у провайдера</div></div>
+  </div>
+</section>
+{% endblock %}
